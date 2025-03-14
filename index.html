@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analyse Réseau et Sécurité sous Linux</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="light-mode">
+  <nav class="navbar">
+    <div class="nav-brand">
+      <i class="fas fa-shield-alt"></i>
+      <span>Linux Security Guide</span>
+    </div>
+    <div class="nav-links">
+      <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
+        <i class="fas fa-moon"></i>
+      </button>
+      <button id="menuToggle" class="menu-toggle" aria-label="Toggle menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <div class="sidebar" id="sidebar">
+    <ul>
+      <li><a href="#objectifs">Objectifs</a></li>
+      <li><a href="#materiel">Matériel requis</a></li>
+      <li><a href="#partie1">Analyse du Réseau</a></li>
+      <li><a href="#partie2">Analyse des Vulnérabilités</a></li>
+      <li><a href="#partie3">Sécurisation des Mots de Passe</a></li>
+      <li><a href="#conclusion">Conclusion</a></li>
+    </ul>
+  </div>
+
+  <main class="content">
+    <header class="hero">
+      <h1>Documentation : Analyse Réseau et Sécurité sous Linux</h1>
+      <p class="hero-description">Cette documentation détaille les étapes essentielles pour analyser un réseau, détecter
+        des vulnérabilités et sécuriser un système Linux. Elle s'adresse aux administrateurs système et aux étudiants en
+        cybersécurité souhaitant approfondir leurs connaissances des outils d'analyse réseau et de test de sécurité.</p>
+    </header>
+
+    <section id="objectifs" class="section">
+      <h2>Objectifs</h2>
+      <p>Ce document vise à fournir une approche détaillée pour :</p>
+      <ul>
+        <li>Utiliser des outils d'analyse réseau et de sécurité sous Linux</li>
+        <li>Identifier les vulnérabilités et tester la robustesse des mots de passe</li>
+        <li>Appliquer des solutions de protection contre les attaques courantes</li>
+      </ul>
+    </section>
+
+    <section id="materiel" class="section">
+      <h2>Matériel requis</h2>
+      <div class="requirements-card">
+        <div class="requirement-item">
+          <i class="fas fa-laptop"></i>
+          <h3>Système d'exploitation</h3>
+          <p>Ubuntu ou Kali Linux</p>
+        </div>
+        <div class="requirement-item">
+          <i class="fas fa-tools"></i>
+          <h3>Outils nécessaires</h3>
+          <p>Nmap, Lynis, John The Ripper</p>
+        </div>
+        <div class="requirement-item">
+          <i class="fas fa-network-wired"></i>
+          <h3>Environnement</h3>
+          <p>Accès à un réseau local ou une machine virtuelle cible</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="partie1" class="section">
+      <h2>Partie 1 : Analyse du Réseau</h2>
+
+      <div class="command-card">
+        <h3>1. Identifier l'adresse IP de la machine</h3>
+        <p class="command-description">L'adresse IP permet d'identifier un appareil sur un réseau. Cette commande liste
+          toutes les interfaces réseau et affiche leur adresse IP actuelle.</p>
+        <div class="command-block" tabindex="0">
+          <div class="command-prompt">$</div>
+          <code class="command-text">ip a</code>
+          <button class="copy-btn" data-command="ip a">
+            <i class="fas fa-copy"></i>
+          </button>
+        </div>
+        <div class="terminal-image" role="img" aria-label="Terminal output">
+          <img src="img/1.png" alt="Terminal output for ip a command">
+        </div>
+      </div>
+
+      <div class="command-card">
+        <h3>2. Scanner les appareils connectés au réseau</h3>
+        <p class="command-description">Cette commande exécute un <strong>ping sweep</strong>, identifiant toutes les
+          machines en ligne sur le réseau. Remplacez <code>192.168.1.0/24</code> par le sous-réseau correspondant à
+          votre réseau local.</p>
+        <div class="command-block" tabindex="0">
+          <div class="command-prompt">$</div>
+          <code class="command-text">nmap -sn 192.168.1.0/24</code>
+          <button class="copy-btn" data-command="nmap -sn 192.168.1.0/24">
+            <i class="fas fa-copy"></i>
+          </button>
+        </div>
+        <div class="terminal-image" role="img" aria-label="Terminal output">
+          <img src="img/2.png" alt="Terminal output for nmap scan">
+        </div>
+      </div>
+
+      <div class="command-card">
+        <h3>3. Identifier les services actifs</h3>
+        <p class="command-description">L'option <code>-sV</code> permet d'obtenir des informations détaillées sur les
+          services en cours d'exécution sur la machine cible. Remplacez <code>&lt;adresse_IP&gt;</code> par l'adresse de
+          la machine à analyser.</p>
+        <div class="command-block" tabindex="0">
+          <div class="command-prompt">$</div>
+          <code class="command-text">nmap -sV &lt;adresse_IP&gt;</code>
+          <button class="copy-btn" data-command="nmap -sV">
+            <i class="fas fa-copy"></i>
+          </button>
+        </div>
+        <div class="terminal-image" role="img" aria-label="Terminal output">
+          <img src="img/3.png" alt="Terminal output for service scan">
+        </div>
+      </div>
+
+      <div class="command-card">
+        <h3>4. Protection contre les scans réseau</h3>
+        <p class="command-description">UFW (Uncomplicated Firewall) permet de contrôler l'accès aux ports ouverts. Cette
+          commande active le pare-feu pour protéger votre système contre les scans non autorisés.</p>
+        <div class="command-block" tabindex="0">
+          <div class="command-prompt">$</div>
+          <code class="command-text">sudo ufw enable</code>
+          <button class="copy-btn" data-command="sudo ufw enable">
+            <i class="fas fa-copy"></i>
+          </button>
+        </div>
+        <div class="terminal-image" role="img" aria-label="Terminal output">
+          <img src="img/4.png" alt="Terminal output for ufw">
+        </div>
+      </div>
+    </section>
+
+    <section id="partie2" class="section">
+      <h2>Partie 2 : Analyse des Vulnérabilités avec Lynis</h2>
+
+      <div class="command-card">
+        <h3>5. Installation de Lynis</h3>
+        <p class="command-description"><code>apt update</code> met à jour la liste des paquets, puis
+          <code>apt install lynis</code> installe l'outil d'audit de sécurité Lynis sur votre système.</p>
+        <div class="command-block" tabindex="0">
+          <div class="command-prompt">$</div>
+          <code class="command-text">sudo apt update && sudo apt install lynis</code>
+          <button class="copy-btn" data-command="sudo apt update && sudo apt install lynis">
+            <i class="fas fa-copy"></i>
+          </button>
+        </div>
+        <div class="terminal-image" role="img" aria-label="Terminal output">
+          <img src="img/5.png" alt="Terminal output for Lynis installation">
+        </div>
+      </div>
+
+      <div class="command-card">
+        <h3>6. Audit de sécurité du système</h3>
+        <div class="command-block" tabindex="0">
+          <div class="command-prompt">$</div>
+          <code class="command-text">sudo lynis audit system</code>
+          <button class="copy-btn" data-command="sudo lynis audit system">
+            <i class="fas fa-copy"></i>
+          </button>
+        </div>
+        <div class="terminal-image" role="img" aria-label="Terminal output">
+          <img src="img/6.png" alt="Terminal output for Lynis audit">
+        </div>
+      </div>
+    </section>
+
+    <section id="partie3" class="section">
+      <h2>Partie 3 : Sécurisation des Mots de Passe</h2>
+
+      <div class="command-card">
+        <h3>8. Générer un mot de passe sécurisé</h3>
+        <p class="command-description">Cette commande génère un mot de passe aléatoire en base64 de 16 caractères, créant ainsi un mot de passe fort et sécurisé.</p>
+      <div class="command-block" tabindex="0">
+          <div class="command-prompt">$</div>
+          <code class="command-text">openssl rand -base64 16</code>
+          <button class="copy-btn" data-command="openssl rand -base64 16">
+            <i class="fas fa-copy"></i>
+          </button>
+        </div>
+        <div class="terminal-image" role="img" aria-label="Terminal output">
+          <img src="img/8.png" alt="Terminal output for password generation">
+        </div>
+      </div>
+
+      <div class="command-card">
+        <h3>9. Chiffrer un mot de passe</h3>
+        <p class="command-description">Cette commande utilise l'algorithme SHA-512 (spécifié par l'option <code>-6</code>) pour hacher le mot de passe, créant ainsi un hachage sécurisé pour le stockage.</p>
+      <div class="command-block" tabindex="0">
+          <div class="command-prompt">$</div>
+          <code class="command-text">echo "mot_de_passe" | openssl passwd -6 -stdin</code>
+          <button class="copy-btn" data-command='echo "mot_de_passe" | openssl passwd -6 -stdin'>
+            <i class="fas fa-copy"></i>
+          </button>
+        </div>
+        <div class="terminal-image" role="img" aria-label="Terminal output">
+          <img src="img/9.png" alt="Terminal output for password encryption">
+        </div>
+      </div>
+    </section>
+
+    <section id="conclusion" class="section">
+      <h2>Conclusion</h2>
+      <p>Cette documentation fournit une approche détaillée pour analyser et sécuriser un système Linux. Il est essentiel de surveiller régulièrement son infrastructure et d'appliquer les bonnes pratiques de sécurité pour se protéger contre les cyberattaques.</p>
+      <div class="command-card">
+        <h3>📌 Recommandation finale</h3>
+        <p class="command-description">Maintenez vos logiciels à jour pour réduire le risque d'exploitation de vulnérabilités connues :</p>
+        <div class="command-block" tabindex="0">
+          <div class="command-prompt">$</div>
+          <code class="command-text">sudo apt update && sudo apt upgrade -y</code>
+          <button class="copy-btn" data-command="sudo apt update && sudo apt upgrade -y">
+            <i class="fas fa-copy"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
